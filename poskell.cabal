@@ -125,4 +125,5 @@ test-suite poskell-test
     -- Test dependencies.
     build-depends:
         base ^>=4.21.0.0,
-        poskell
+        poskell,
+        hspec
