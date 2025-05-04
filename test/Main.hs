@@ -1,6 +1,6 @@
 module Main (main) where
-import Test.Hspec (Spec, describe, hspec, it, shouldBe)
-import Cards (Value(..), Color(..), Card(..))
+import Test.Hspec (Spec, describe, hspec, it, shouldBe, shouldSatisfy, Expectation)
+import Cards (Value(..), Color(..), Card(..), Hand(..))
 
 main :: IO ()
 main = hspec globalSpec
@@ -13,8 +13,8 @@ globalSpec = do
     queenDiamondEqualQueenHeart
     aceHeartNotEqualToEightClubs
     tenClubsBetterThanthreeHearts
-    -- pairBetterThanHighCard 
-
+    pairBetterThanHighCard 
+    pairOfKingsBetterThanPairOfQueens 
 shouldBeGreaterThan :: (Ord a, Show a) => a -> a -> Expectation
 shouldBeGreaterThan a b = a `shouldSatisfy` (>b)
 
@@ -35,3 +35,5 @@ tenClubsBetterThanthreeHearts = it "ensures that 10 clubs us better than three h
 
 pairBetterThanHighCard = it "ensures a pair wins over a high card" $ do
   Pair (Jack) `shouldBeGreaterThan` High King
+pairOfKingsBetterThanPairOfQueens = it "ensures a pair of kings wins over a pair of queens" $ do
+  Pair King `shouldBeGreaterThan` Pair Queen
