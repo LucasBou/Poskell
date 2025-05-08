@@ -3,7 +3,7 @@ import Data.List
 data Color = Hearts | Spades | Diamonds | Clubs deriving (Eq,Ord,Show)
 
 
-data Value = Num Int | Jack | Queen | King | Ace deriving (Ord, Eq,Show)
+data Value = One |Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten| Jack | Queen | King | Ace deriving (Ord, Eq,Show, Enum)
 
 data Card = Card { color :: Color, value :: Value} deriving (Show)
 instance Eq Card  where 
@@ -18,12 +18,23 @@ type Cards = [Card]
 extractColor :: Card->Color
 extractColor Card {color=col,value=_} = col
 
+extractValue :: Card->Value
+extractValue Card {color=_,value=val} = val
+
 extractListColors:: Cards ->[Color]
 extractListColors cards = map extractColor cards
+
+extractListValues:: Cards ->[Value]
+extractListValues cards = map extractValue cards
 
 sortByColor :: Cards->[Color]
 sortByColor cards = sort (extractListColors cards)
 
+sortByValue :: Cards -> [Value]
+sortByValue cards = sort (extractListValues cards)
 
 isFlush :: Cards->Bool
-isFlush cards = head (sortByColor cards )== sortByColor cards !!4
+isFlush cards = sortByColor cards !!0== sortByColor cards !!4
+
+isStraight :: Cards->Bool
+isStraight cards = sortByValue cards !!4 == succ (succ (succ (succ (sortByValue cards !!0))))
