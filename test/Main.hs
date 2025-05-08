@@ -20,7 +20,8 @@ globalSpec = do
     detectStraight2
     detectNotStraight1
     detectNotStraight2
-
+    detectFlushStraight
+    detectNotFlushStraight
 dummyTest = it "ensures the test suite runs" $ do
   1 `shouldBe` 1
 
@@ -58,3 +59,9 @@ detectNotStraight1 = it "ensures that 2 of heart, 3 of spades, 4 of diamonds, Ja
 
 detectNotStraight2 = it "ensures that 10 of heart, jack of spades, queen of diamonds, king of clubs and two of spades is a straight" $ do
   isStraight [Card Hearts Ten, Card Spades Jack, Card Diamonds Queen, Card Clubs King, Card Spades Two] `shouldBe` False
+
+detectFlushStraight = it "ensures that 2, 3, 4,5, and 6 of diamonds is a straight flush" $ do
+  isFlush [Card Diamonds Two, Card Diamonds Three, Card Diamonds Four, Card Diamonds Five, Card Diamonds Six] `shouldBe` True
+
+detectNotFlushStraight = it "ensures that 2, 3, 4,5 of diamonds + 6 of Spades is not a straight flush" $ do
+  isFlush [Card Diamonds Two, Card Diamonds Three, Card Diamonds Four, Card Diamonds Five, Card Spades Six] `shouldBe` False

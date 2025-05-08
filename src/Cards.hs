@@ -38,3 +38,6 @@ isFlush cards = sortByColor cards !!0== sortByColor cards !!4
 
 isStraight :: Cards->Bool
 isStraight cards = sortByValue cards !!4 == succ (succ (succ (succ (sortByValue cards !!0))))
+
+isFlushStraight :: Cards->Bool
+isFlushStraight cards = isStraight cards && isFlush cards 
