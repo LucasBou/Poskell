@@ -56,3 +56,6 @@ isPair cards = (sortByValue cards !! 0 == sortByValue cards !!1 ) || (sortByValu
 
 isTwoPairs:: Cards->Bool
 isTwoPairs cards = not(isFourOfAKind cards) && (((sortByValue cards !! 0 == sortByValue cards !!1 ) && (sortByValue cards !! 2 == sortByValue cards !!3 )) ||((sortByValue cards !! 0 == sortByValue cards !!1 ) && (sortByValue cards !! 3 == sortByValue cards !!4 )) ||((sortByValue cards !! 3 == sortByValue cards !!4 ) && (sortByValue cards !! 2 == sortByValue cards !!3 )))
+
+isFull:: Cards -> Bool
+isFull cards = ((sortByValue cards !! 0 == sortByValue cards !! 2) && (sortByValue cards !! 3 == sortByValue cards !! 4)) ||((sortByValue cards !! 0 == sortByValue cards !! 1) && (sortByValue cards !! 2 == sortByValue cards !! 4))

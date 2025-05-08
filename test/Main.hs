@@ -1,6 +1,6 @@
 module Main (main) where
 import Test.Hspec (Spec, describe, hspec, it, shouldBe)
-import Cards (Value(..), Color(..), Card(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs)
+import Cards (Value(..), Color(..), Card(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs, isFull)
 
 main :: IO ()
 main = hspec globalSpec
@@ -30,6 +30,8 @@ globalSpec = do
     detectNotPair
     detectTwoPairs
     detectNotTwoPairs
+    detectFull
+    detectNotFull
 
 dummyTest = it "ensures the test suite runs" $ do
   1 `shouldBe` 1
@@ -96,3 +98,9 @@ detectTwoPairs = it "ensures that Jack of spades and hearts + 3 of clubs and dia
 
 detectNotTwoPairs =it "ensures that Jack of spades and hearts + 3 of clubs + king Diamonds + Ace of spades" $ do
   isTwoPairs [Card Spades Jack, Card Hearts Jack, Card Clubs Three, Card Diamonds King, Card Spades Ace] `shouldBe` False
+
+detectFull= it "ensures that Jack of spades and hearts and diamonds + 3 of clubs and diamonds " $ do
+  isFull [Card Spades Jack, Card Hearts Jack, Card Diamonds Jack, Card Diamonds Three, Card Clubs Three] `shouldBe` True
+
+detectNotFull = it "ensures that Jack of spades and hearts and diamonds + 3 of diamonds + 2 of clubs " $ do
+  isFull [Card Spades Jack, Card Hearts Jack, Card Diamonds Jack, Card Diamonds Three, Card Clubs Two] `shouldBe` False
