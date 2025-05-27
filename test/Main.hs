@@ -32,6 +32,8 @@ globalSpec = do
     detectNotTwoPairs
     detectFull
     detectNotFull
+    detectStraightWithHoles 
+    detectLowestStraight 
 
 dummyTest = it "ensures the test suite runs" $ do
   1 `shouldBe` 1
@@ -104,3 +106,8 @@ detectFull= it "ensures that Jack of spades and hearts and diamonds + 3 of clubs
 
 detectNotFull = it "ensures that Jack of spades and hearts and diamonds + 3 of diamonds + 2 of clubs " $ do
   isFull [Card Spades Jack, Card Hearts Jack, Card Diamonds Jack, Card Diamonds Three, Card Clubs Two] `shouldBe` False
+
+detectStraightWithHoles = it "ensures that quads of 2s and a six is not a straight" $ do
+  isStraight [Card Spades Two, Card Hearts Two, Card Diamonds Two, Card Clubs Two, Card Clubs Six] `shouldBe` False
+detectLowestStraight = it "ensures that a series of Ace to 4 is a straight" $ do
+  isStraight [Card Spades Ace, Card Hearts Two, Card Diamonds Three, Card Clubs Four, Card Clubs Five] `shouldBe` True

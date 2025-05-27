@@ -1,9 +1,10 @@
 module Cards where
 import Data.List
+import Debug.Trace 
 data Color = Hearts | Spades | Diamonds | Clubs deriving (Eq,Ord,Show)
 
 
-data Value = One |Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten| Jack | Queen | King | Ace deriving (Ord, Eq,Show, Enum)
+data Value = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten| Jack | Queen | King | Ace deriving (Ord, Eq,Show, Enum)
 
 data Card = Card { color :: Color, value :: Value} deriving (Show)
 instance Eq Card  where 
@@ -40,7 +41,10 @@ isFlush :: Cards->Bool
 isFlush cards = sortByColor cards !!0== sortByColor cards !!4
 
 isStraight :: Cards->Bool
-isStraight cards = sortByValue cards !!4 == succ (succ (succ (succ (sortByValue cards !!0))))
+isStraight cards = communStraight || lowStraight
+    where sorted = sortByValue cards
+          communStraight = (tail sorted) == (fmap succ (init sorted))
+          lowStraight = sorted == [Two, Three, Four, Five, Ace]
 
 isFlushStraight :: Cards->Bool
 isFlushStraight cards = isStraight cards && isFlush cards 
