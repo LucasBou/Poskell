@@ -26,13 +26,13 @@ extractListColors:: Cards -> [Color]
 extractListColors cards = map extractColor cards
 
 extractListValues:: Cards -> [Value]
-extractListValues cards = map extractValue cards
+extractListValues = fmap value
 
 sortByColor :: Cards->[Color]
 sortByColor cards = sort (extractListColors cards)
 
 sortByValue :: Cards -> [Value]
-sortByValue cards = sort (extractListValues cards)
+sortByValue = fmap value . sortOn value
 
 highest_card::Cards -> Value
 highest_card cards = last (sortByValue(cards))
