@@ -64,3 +64,4 @@ isTwoPairs cards = not(isFourOfAKind cards) && (((sorted !! 0 == sorted !!1 ) &&
 isFull:: Cards -> Bool
 isFull cards = ((sorted !! 0 == sorted !! 2) && (sorted !! 3 == sorted !! 4)) ||((sorted !! 0 == sorted !! 1) && (sorted !! 2 == sorted !! 4))
     where sorted = sortByValue cards
+data Hand = High Value | Pair Value | TwoPair Value Value | ThreeOfAKind Value | Straight Value | Flush Value | FullHouse Value Value | FourOfAKind Value | StraightFlush Value deriving(Eq, Ord, Show)

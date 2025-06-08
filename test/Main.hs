@@ -1,6 +1,7 @@
 module Main (main) where
-import Test.Hspec (Spec, describe, hspec, it, shouldBe)
-import Cards (Value(..), Color(..), Card(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs, isFull)
+import Test.Hspec (Spec, describe, hspec, it, shouldBe,shouldSatisfy, Expectation)
+import Cards (Value(..), Color(..), Card(..), Hand(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs, isFull)
+
 
 main :: IO ()
 main = hspec globalSpec
@@ -34,12 +35,16 @@ globalSpec = do
     detectNotFull
     detectStraightWithHoles 
     detectLowestStraight 
+    pairBetterThanHighCard 
+    pairOfKingsBetterThanPairOfQueens 
+shouldBeGreaterThan :: (Ord a, Show a) => a -> a -> Expectation
+shouldBeGreaterThan a b = a `shouldSatisfy` (>b)
 
 dummyTest = it "ensures the test suite runs" $ do
   1 `shouldBe` 1
 
 queenBetterThanJack = it "ensures a queen beats a jack" $ do
-    Jack < Queen  `shouldBe` True
+    Queen `shouldBeGreaterThan` Jack
 
 queenDiamondEqualQueenHeart =  it "ensures that a queen diamond is equal to queen heart" $ do
     Card Diamonds Queen == Card Hearts Queen `shouldBe` True
@@ -111,3 +116,9 @@ detectStraightWithHoles = it "ensures that quads of 2s and a six is not a straig
   isStraight [Card Spades Two, Card Hearts Two, Card Diamonds Two, Card Clubs Two, Card Clubs Six] `shouldBe` False
 detectLowestStraight = it "ensures that a series of Ace to 4 is a straight" $ do
   isStraight [Card Spades Ace, Card Hearts Two, Card Diamonds Three, Card Clubs Four, Card Clubs Five] `shouldBe` True
+  Card Clubs Ten `shouldBeGreaterThan` Card Hearts Three
+
+pairBetterThanHighCard = it "ensures a pair wins over a high card" $ do
+  Pair (Jack) `shouldBeGreaterThan` High King
+pairOfKingsBetterThanPairOfQueens = it "ensures a pair of kings wins over a pair of queens" $ do
+  Pair King `shouldBeGreaterThan` Pair Queen
