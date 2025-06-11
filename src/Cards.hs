@@ -1,6 +1,5 @@
 module Cards where
 import Data.List
-import Debug.Trace 
 data Color = Hearts | Spades | Diamonds | Clubs deriving (Eq,Ord,Show)
 
 
@@ -38,7 +37,7 @@ isFlush cards = sorted !!0== sorted !!4
 isStraight :: Cards->Bool
 isStraight cards = communStraight || lowStraight
     where sorted = sortByValue cards
-          communStraight = (tail sorted) == (fmap succ (init sorted))
+          communStraight = (drop 1 sorted) == (fmap succ (init sorted))
           lowStraight = sorted == [Two, Three, Four, Five, Ace]
 
 isFlushStraight :: Cards->Bool
