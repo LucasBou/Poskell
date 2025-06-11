@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-missing-signatures #-}
 module Main (main) where
 import Test.Hspec (Spec, describe, hspec, it, shouldBe,shouldSatisfy, Expectation)
-import Cards (Value(..), Color(..), Card(..), Hand(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs, isFull)
+import Cards (Value(..), Color(..), Card(..), Hand(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs, isFull, noKicker, kickers)
 
 
 main :: IO ()
@@ -38,6 +38,8 @@ globalSpec = do
     detectLowestStraight 
     pairBetterThanHighCard 
     pairOfKingsBetterThanPairOfQueens 
+    samePairShouldBeDifferentiatedWithkickers 
+
 shouldBeGreaterThan :: (Ord a, Show a) => a -> a -> Expectation
 shouldBeGreaterThan a b = a `shouldSatisfy` (>b)
 
@@ -120,6 +122,10 @@ detectLowestStraight = it "ensures that a series of Ace to 4 is a straight" $ do
   Card Clubs Ten `shouldBeGreaterThan` Card Hearts Three
 
 pairBetterThanHighCard = it "ensures a pair wins over a high card" $ do
-  Pair (Jack) `shouldBeGreaterThan` High King
+  Pair Jack noKicker `shouldBeGreaterThan` High King noKicker
+
 pairOfKingsBetterThanPairOfQueens = it "ensures a pair of kings wins over a pair of queens" $ do
-  Pair King `shouldBeGreaterThan` Pair Queen
+  Pair King noKicker `shouldBeGreaterThan` Pair Queen noKicker
+
+samePairShouldBeDifferentiatedWithkickers = it "ensures two competing pairs are differientiated through the kickers" $ do
+  Pair King (kickers [Queen]) `shouldBeGreaterThan` Pair King (kickers [Two])
