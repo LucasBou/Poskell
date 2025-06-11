@@ -42,7 +42,7 @@ shouldBeGreaterThan :: (Ord a, Show a) => a -> a -> Expectation
 shouldBeGreaterThan a b = a `shouldSatisfy` (>b)
 
 dummyTest = it "ensures the test suite runs" $ do
-  1 `shouldBe` 1
+  True `shouldBe` True
 
 queenBetterThanJack = it "ensures a queen beats a jack" $ do
     Queen `shouldBeGreaterThan` Jack
