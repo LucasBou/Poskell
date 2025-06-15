@@ -2,8 +2,8 @@
 {-# OPTIONS_GHC -Wno-missing-signatures #-}
 module Main (main) where
 import Test.Hspec (Spec, describe, hspec, it, shouldBe,shouldSatisfy, Expectation)
-import Cards (Value(..), Color(..), Card(..), Hand(..), isFlush, isStraight, isFourOfAKind, isThreeOfAKind, isPair,isTwoPairs, isFull, noKicker, kickers)
-
+import Cards (Value(..), Color(..), Card(..))
+import Hands
 
 main :: IO ()
 main = hspec globalSpec
