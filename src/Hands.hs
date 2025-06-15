@@ -27,11 +27,11 @@ sortByColor cards = sort (extractListColors cards)
 sortByValue :: Cards -> [Value]
 sortByValue = fmap value . sortOn value
 
-highest_card :: Cards -> Value
-highest_card cards = last (sortByValue (cards))
+highestCard :: Cards -> Value
+highestCard cards = last (sortByValue cards)
 
 isFlush :: Cards -> Bool
-isFlush cards = sorted !! 0 == sorted !! 4
+isFlush cards = head sorted == sorted !! 4
   where
     sorted = sortByColor cards
 
@@ -39,33 +39,33 @@ isStraight :: Cards -> Bool
 isStraight cards = communStraight || lowStraight
   where
     sorted = sortByValue cards
-    communStraight = (drop 1 sorted) == (fmap succ (init sorted))
+    communStraight = drop 1 sorted == fmap succ (init sorted)
     lowStraight = sorted == [Two, Three, Four, Five, Ace]
 
 isFlushStraight :: Cards -> Bool
 isFlushStraight cards = isStraight cards && isFlush cards
 
 isFourOfAKind :: Cards -> Bool
-isFourOfAKind cards = (sorted !! 0 == sorted !! 3) || (sorted !! 1 == sorted !! 4)
+isFourOfAKind cards = (head sorted == sorted !! 3) || (sorted !! 1 == sorted !! 4)
   where
     sorted = sortByValue cards
 
 isThreeOfAKind :: Cards -> Bool
-isThreeOfAKind cards = (sorted !! 0 == sorted !! 2) || (sorted !! 1 == sorted !! 3) || (sorted !! 2 == sorted !! 4)
+isThreeOfAKind cards = (head sorted == sorted !! 2) || (sorted !! 1 == sorted !! 3) || (sorted !! 2 == sorted !! 4)
   where
     sorted = sortByValue cards
 
 isPair :: Cards -> Bool
-isPair cards = (sorted !! 0 == sorted !! 1) || (sorted !! 1 == sorted !! 2) || (sorted !! 2 == sorted !! 3) || (sorted !! 3 == sorted !! 4)
+isPair cards = (head sorted == sorted !! 1) || (sorted !! 1 == sorted !! 2) || (sorted !! 2 == sorted !! 3) || (sorted !! 3 == sorted !! 4)
   where
     sorted = sortByValue cards
 
 isTwoPairs :: Cards -> Bool
-isTwoPairs cards = not (isFourOfAKind cards) && (((sorted !! 0 == sorted !! 1) && (sorted !! 2 == sorted !! 3)) || ((sorted !! 0 == sorted !! 1) && (sorted !! 3 == sorted !! 4)) || ((sorted !! 3 == sorted !! 4) && (sorted !! 2 == sorted !! 3)))
+isTwoPairs cards = not (isFourOfAKind cards) && (((head sorted == sorted !! 1) && (sorted !! 2 == sorted !! 3)) || ((head sorted == sorted !! 1) && (sorted !! 3 == sorted !! 4)) || ((sorted !! 3 == sorted !! 4) && (sorted !! 2 == sorted !! 3)))
   where
     sorted = sortByValue cards
 
 isFull :: Cards -> Bool
-isFull cards = ((sorted !! 0 == sorted !! 2) && (sorted !! 3 == sorted !! 4)) || ((sorted !! 0 == sorted !! 1) && (sorted !! 2 == sorted !! 4))
+isFull cards = ((head sorted == sorted !! 2) && (sorted !! 3 == sorted !! 4)) || ((head sorted == sorted !! 1) && (sorted !! 2 == sorted !! 4))
   where
     sorted = sortByValue cards
