@@ -1,9 +1,10 @@
 module Hands where
 
 import Cards
-import Data.List (sort)
+import Data.List (maximumBy, sort, uncons)
 import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
+import Data.Maybe (isJust)
 
 type Cards = NonEmpty Card
 
@@ -27,9 +28,10 @@ highestCard :: Cards -> Value
 highestCard = NE.last . sortByValue
 
 isFlush :: Cards -> Bool
-isFlush cards = NE.head sorted == sorted NE.!! 4
-  where
-    sorted = sortByColor cards
+isFlush = isJust . toFlush
+
+toFlush :: Cards -> Maybe Hand
+toFlush = fmap (Flush . maximum . fmap value . fst) . uncons . NE.filter ((> 4) . length) . NE.groupWith1 color
 
 isStraight :: Cards -> Bool
 isStraight cards = communStraight || lowStraight
