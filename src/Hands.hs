@@ -1,9 +1,11 @@
 module Hands where
 
 import Cards
-import Data.List (sort, sortOn)
+import Data.List (sort)
+import Data.List.NonEmpty (NonEmpty)
+import Data.List.NonEmpty qualified as NE
 
-type Cards = [Card]
+type Cards = NonEmpty Card
 
 newtype Kickers = Kickers [Value] deriving (Eq, Ord, Show)
 
@@ -15,23 +17,17 @@ noKicker = kickers []
 
 data Hand = High Value Kickers | Pair Value Kickers | TwoPair Value Value Kickers | ThreeOfAKind Value Kickers | Straight Value | Flush Value | FullHouse Value Value | FourOfAKind Value Kickers | StraightFlush Value deriving (Eq, Ord, Show)
 
-extractListColors :: Cards -> [Color]
-extractListColors = fmap color
+sortByColor :: Cards -> NonEmpty Color
+sortByColor = NE.sort . fmap color
 
-extractListValues :: Cards -> [Value]
-extractListValues = fmap value
-
-sortByColor :: Cards -> [Color]
-sortByColor cards = sort (extractListColors cards)
-
-sortByValue :: Cards -> [Value]
-sortByValue = fmap value . sortOn value
+sortByValue :: Cards -> NonEmpty Value
+sortByValue = NE.sort . fmap value
 
 highestCard :: Cards -> Value
-highestCard cards = last (sortByValue cards)
+highestCard = NE.last . sortByValue
 
 isFlush :: Cards -> Bool
-isFlush cards = head sorted == sorted !! 4
+isFlush cards = NE.head sorted == sorted NE.!! 4
   where
     sorted = sortByColor cards
 
@@ -39,33 +35,33 @@ isStraight :: Cards -> Bool
 isStraight cards = communStraight || lowStraight
   where
     sorted = sortByValue cards
-    communStraight = drop 1 sorted == fmap succ (init sorted)
-    lowStraight = sorted == [Two, Three, Four, Five, Ace]
+    communStraight = NE.tail sorted == fmap succ (NE.init sorted)
+    lowStraight = sorted == NE.fromList [Two, Three, Four, Five, Ace]
 
 isFlushStraight :: Cards -> Bool
 isFlushStraight cards = isStraight cards && isFlush cards
 
 isFourOfAKind :: Cards -> Bool
-isFourOfAKind cards = (head sorted == sorted !! 3) || (sorted !! 1 == sorted !! 4)
+isFourOfAKind cards = (NE.head sorted == sorted NE.!! 3) || (sorted NE.!! 1 == sorted NE.!! 4)
   where
     sorted = sortByValue cards
 
 isThreeOfAKind :: Cards -> Bool
-isThreeOfAKind cards = (head sorted == sorted !! 2) || (sorted !! 1 == sorted !! 3) || (sorted !! 2 == sorted !! 4)
+isThreeOfAKind cards = (NE.head sorted == sorted NE.!! 2) || (sorted NE.!! 1 == sorted NE.!! 3) || (sorted NE.!! 2 == sorted NE.!! 4)
   where
     sorted = sortByValue cards
 
 isPair :: Cards -> Bool
-isPair cards = (head sorted == sorted !! 1) || (sorted !! 1 == sorted !! 2) || (sorted !! 2 == sorted !! 3) || (sorted !! 3 == sorted !! 4)
+isPair cards = (NE.head sorted == sorted NE.!! 1) || (sorted NE.!! 1 == sorted NE.!! 2) || (sorted NE.!! 2 == sorted NE.!! 3) || (sorted NE.!! 3 == sorted NE.!! 4)
   where
     sorted = sortByValue cards
 
 isTwoPairs :: Cards -> Bool
-isTwoPairs cards = not (isFourOfAKind cards) && (((head sorted == sorted !! 1) && (sorted !! 2 == sorted !! 3)) || ((head sorted == sorted !! 1) && (sorted !! 3 == sorted !! 4)) || ((sorted !! 3 == sorted !! 4) && (sorted !! 2 == sorted !! 3)))
+isTwoPairs cards = not (isFourOfAKind cards) && (((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 2 == sorted NE.!! 3)) || ((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 3 == sorted NE.!! 4)) || ((sorted NE.!! 3 == sorted NE.!! 4) && (sorted NE.!! 2 == sorted NE.!! 3)))
   where
     sorted = sortByValue cards
 
 isFull :: Cards -> Bool
-isFull cards = ((head sorted == sorted !! 2) && (sorted !! 3 == sorted !! 4)) || ((head sorted == sorted !! 1) && (sorted !! 2 == sorted !! 4))
+isFull cards = ((NE.head sorted == sorted NE.!! 2) && (sorted NE.!! 3 == sorted NE.!! 4)) || ((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 2 == sorted NE.!! 4))
   where
     sorted = sortByValue cards
