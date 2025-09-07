@@ -59,27 +59,49 @@ toStraightFlush = join . (liftA2 returnsifequal <$> toStraight <*> toFlush)
 isFlushStraight :: Cards -> Bool
 isFlushStraight = isJust . toStraightFlush
 
--- this should be tweaked to also get the kickers
-toNOfAKind :: Int -> Cards -> Maybe Card
-toNOfAKind n = fmap NE.head . find ((== n) . NE.length) . NE.groupAllWith1 value
-
-toPair :: Cards -> Maybe Hand
-toPair = fmap ((`Pair` noKicker) . value) . toNOfAKind 2
+toKinds :: Cards -> Maybe Hand
+toKinds cs = case lengths of
+  4 NE.:| _ -> Just $ FourOfAKind extractedDominant extractedKickersWithoutSecondary
+  3 NE.:| 2 : _ -> Just $ FullHouse extractedDominant extractedSecondary
+  3 NE.:| _ -> Just $ ThreeOfAKind extractedDominant extractedKickersWithoutSecondary
+  2 NE.:| 2 : _ -> Just $ TwoPair extractedDominant extractedSecondary extractedKickersWithSecondary
+  2 NE.:| _ -> Just $ Pair extractedDominant extractedKickersWithoutSecondary
+  1 NE.:| _ -> Just $ High extractedDominant extractedKickersWithoutSecondary
+  _ -> Nothing
+  where
+    grouped = NE.sortWith NE.length $ NE.groupAllWith1 value cs
+    lengths = fmap NE.length grouped
+    extractedDominant = NE.head (NE.head (fmap (fmap value) grouped))
+    extractedSecondary = NE.head (fmap (fmap value) grouped NE.!! 1)
+    extractedKickersWithoutSecondary = kickers $ fmap value $ NE.toList $ grouped NE.!! 1
+    extractedKickersWithSecondary = kickers $ fmap value $ NE.toList $ grouped NE.!! 2
 
 isFourOfAKind :: Cards -> Bool
-isFourOfAKind cards = (NE.head sorted == sorted NE.!! 3) || (sorted NE.!! 1 == sorted NE.!! 4)
-  where
-    sorted = sortByValue cards
+isFourOfAKind cs = case toKinds cs of
+  Just (FourOfAKind _ _) -> True
+  _ -> False
+
+-- isFourOfAKind cards = (NE.head sorted == sorted NE.!! 3) || (sorted NE.!! 1 == sorted NE.!! 4)
+--   where
+--     sorted = sortByValue cards
 
 isThreeOfAKind :: Cards -> Bool
-isThreeOfAKind cards = (NE.head sorted == sorted NE.!! 2) || (sorted NE.!! 1 == sorted NE.!! 3) || (sorted NE.!! 2 == sorted NE.!! 4)
-  where
-    sorted = sortByValue cards
+isThreeOfAKind cs = case toKinds cs of
+  Just (ThreeOfAKind _ _) -> True
+  _ -> False
+
+-- isThreeOfAKind cards = (NE.head sorted == sorted NE.!! 2) || (sorted NE.!! 1 == sorted NE.!! 3) || (sorted NE.!! 2 == sorted NE.!! 4)
+--   where
+--     sorted = sortByValue cards
 
 isPair :: Cards -> Bool
-isPair cards = (NE.head sorted == sorted NE.!! 1) || (sorted NE.!! 1 == sorted NE.!! 2) || (sorted NE.!! 2 == sorted NE.!! 3) || (sorted NE.!! 3 == sorted NE.!! 4)
-  where
-    sorted = sortByValue cards
+isPair cs = case toKinds cs of
+  Just (Pair _ _) -> True
+  _ -> False
+
+-- isPair cards = (NE.head sorted == sorted NE.!! 1) || (sorted NE.!! 1 == sorted NE.!! 2) || (sorted NE.!! 2 == sorted NE.!! 3) || (sorted NE.!! 3 == sorted NE.!! 4)
+--   where
+--     sorted = sortByValue cards
 
 isTwoPairs :: Cards -> Bool
 isTwoPairs cards = not (isFourOfAKind cards) && (((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 2 == sorted NE.!! 3)) || ((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 3 == sorted NE.!! 4)) || ((sorted NE.!! 3 == sorted NE.!! 4) && (sorted NE.!! 2 == sorted NE.!! 3)))
