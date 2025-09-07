@@ -2,6 +2,7 @@ module Hands where
 
 import Cards
 import Control.Applicative ((<|>))
+import Control.Monad (join)
 import Data.List (maximumBy, sort, uncons)
 import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
@@ -50,8 +51,13 @@ toStraight = liftA2 (<|>) toCommonStraight toLowStraight
 isStraight :: Cards -> Bool
 isStraight = isJust . toStraight
 
+toStraightFlush :: Cards -> Maybe Hand
+toStraightFlush = join . (liftA2 returnsifequal <$> toStraight <*> toFlush)
+  where
+    returnsifequal a b = if a == b then Just a else Nothing
+
 isFlushStraight :: Cards -> Bool
-isFlushStraight cards = isStraight cards && isFlush cards
+isFlushStraight = isJust . toStraightFlush
 
 isFourOfAKind :: Cards -> Bool
 isFourOfAKind cards = (NE.head sorted == sorted NE.!! 3) || (sorted NE.!! 1 == sorted NE.!! 4)
