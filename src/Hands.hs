@@ -1,6 +1,7 @@
 module Hands where
 
 import Cards
+import Control.Applicative ((<|>))
 import Data.List (maximumBy, sort, uncons)
 import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
@@ -33,12 +34,21 @@ isFlush = isJust . toFlush
 toFlush :: Cards -> Maybe Hand
 toFlush = fmap (Flush . maximum . fmap value . fst) . uncons . NE.filter ((> 4) . length) . NE.groupWith1 color
 
-isStraight :: Cards -> Bool
-isStraight cards = communStraight || lowStraight
+toCommonStraight :: Cards -> Maybe Hand
+toCommonStraight cards = if NE.tail sorted == fmap succ (NE.init sorted) then Just $ Straight $ NE.head sorted else Nothing
   where
     sorted = sortByValue cards
-    communStraight = NE.tail sorted == fmap succ (NE.init sorted)
-    lowStraight = sorted == NE.fromList [Two, Three, Four, Five, Ace]
+
+toLowStraight :: Cards -> Maybe Hand
+toLowStraight cards = if sorted == NE.fromList [Two, Three, Four, Five, Ace] then Just $ Straight Five else Nothing
+  where
+    sorted = sortByValue cards
+
+toStraight :: Cards -> Maybe Hand
+toStraight = liftA2 (<|>) toCommonStraight toLowStraight
+
+isStraight :: Cards -> Bool
+isStraight = isJust . toStraight
 
 isFlushStraight :: Cards -> Bool
 isFlushStraight cards = isStraight cards && isFlush cards
