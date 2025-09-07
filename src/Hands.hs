@@ -3,10 +3,10 @@ module Hands where
 import Cards
 import Control.Applicative ((<|>))
 import Control.Monad (join)
-import Data.List (maximumBy, sort, uncons)
+import Data.List (find, maximumBy, sort, uncons)
 import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
-import Data.Maybe (isJust)
+import Data.Maybe (isJust, listToMaybe)
 
 type Cards = NonEmpty Card
 
@@ -58,6 +58,13 @@ toStraightFlush = join . (liftA2 returnsifequal <$> toStraight <*> toFlush)
 
 isFlushStraight :: Cards -> Bool
 isFlushStraight = isJust . toStraightFlush
+
+-- this should be tweaked to also get the kickers
+toNOfAKind :: Int -> Cards -> Maybe Card
+toNOfAKind n = fmap NE.head . find ((== n) . NE.length) . NE.groupAllWith1 value
+
+toPair :: Cards -> Maybe Hand
+toPair = fmap ((`Pair` noKicker) . value) . toNOfAKind 2
 
 isFourOfAKind :: Cards -> Bool
 isFourOfAKind cards = (NE.head sorted == sorted NE.!! 3) || (sorted NE.!! 1 == sorted NE.!! 4)
