@@ -7,6 +7,7 @@ import Data.List (find, maximumBy, sort, uncons)
 import Data.List.NonEmpty (NonEmpty)
 import Data.List.NonEmpty qualified as NE
 import Data.Maybe (isJust, listToMaybe)
+import Data.Ord (Down(..), comparing)
 
 type Cards = NonEmpty Card
 
@@ -69,7 +70,7 @@ toKinds cs = case lengths of
   1 NE.:| _ -> Just $ High extractedDominant extractedKickersWithoutSecondary
   _ -> Nothing
   where
-    grouped = NE.sortWith NE.length $ NE.groupAllWith1 value cs
+    grouped = NE.sortBy (comparing (Down . NE.length)) $ NE.groupAllWith1 value cs
     lengths = fmap NE.length grouped
     extractedDominant = NE.head (NE.head (fmap (fmap value) grouped))
     extractedSecondary = NE.head (fmap (fmap value) grouped NE.!! 1)
