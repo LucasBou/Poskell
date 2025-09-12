@@ -82,34 +82,22 @@ isFourOfAKind cs = case toKinds cs of
   Just (FourOfAKind _ _) -> True
   _ -> False
 
--- isFourOfAKind cards = (NE.head sorted == sorted NE.!! 3) || (sorted NE.!! 1 == sorted NE.!! 4)
---   where
---     sorted = sortByValue cards
-
 isThreeOfAKind :: Cards -> Bool
 isThreeOfAKind cs = case toKinds cs of
   Just (ThreeOfAKind _ _) -> True
   _ -> False
-
--- isThreeOfAKind cards = (NE.head sorted == sorted NE.!! 2) || (sorted NE.!! 1 == sorted NE.!! 3) || (sorted NE.!! 2 == sorted NE.!! 4)
---   where
---     sorted = sortByValue cards
 
 isPair :: Cards -> Bool
 isPair cs = case toKinds cs of
   Just (Pair _ _) -> True
   _ -> False
 
--- isPair cards = (NE.head sorted == sorted NE.!! 1) || (sorted NE.!! 1 == sorted NE.!! 2) || (sorted NE.!! 2 == sorted NE.!! 3) || (sorted NE.!! 3 == sorted NE.!! 4)
---   where
---     sorted = sortByValue cards
-
 isTwoPairs :: Cards -> Bool
-isTwoPairs cards = not (isFourOfAKind cards) && (((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 2 == sorted NE.!! 3)) || ((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 3 == sorted NE.!! 4)) || ((sorted NE.!! 3 == sorted NE.!! 4) && (sorted NE.!! 2 == sorted NE.!! 3)))
-  where
-    sorted = sortByValue cards
+isTwoPairs cs = case toKinds cs of
+  Just (TwoPair _ _ _) -> True
+  _ -> False
 
 isFull :: Cards -> Bool
-isFull cards = ((NE.head sorted == sorted NE.!! 2) && (sorted NE.!! 3 == sorted NE.!! 4)) || ((NE.head sorted == sorted NE.!! 1) && (sorted NE.!! 2 == sorted NE.!! 4))
-  where
-    sorted = sortByValue cards
+isFull cs = case toKinds cs of
+  Just (FullHouse _ _) -> True
+  _ -> False
